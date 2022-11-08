@@ -4,6 +4,7 @@ import {
   getUsuarios,
   getUsuario,
   crearUsuario,
+  loginUsuario,
   editarUsuario,
   eliminarUsuario,
 } from '../controllers/usuario';
@@ -14,6 +15,8 @@ router.get('/', getUsuarios);
 
 // TODO validar campos
 router.get('/:id', getUsuario);
+
+router.post('/login', loginUsuario);
 
 router.post('/', crearUsuario);
 
