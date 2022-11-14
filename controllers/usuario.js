@@ -6,12 +6,27 @@ import Usuario from '../models/usuario';
 export const getUsuarios = async (req, res) => {
   const usuarios = await Usuario.findAll();
 
+  if (!usuarios) {
+    return res.json({
+      ok: false,
+      msg: 'No hay usuarios',
+      usuarios: [],
+    });
+  }
+
   res.json(usuarios);
 };
 
 export const getUsuario = async (req, res) => {
   const { id } = req.params;
   const usuario = await Usuario.findByPk(id);
+
+  if (!usuario) {
+    return res.json({
+      ok: false,
+      msg: 'Usuario no encontrado',
+    });
+  }
 
   res.json(usuario);
 };
@@ -46,9 +61,12 @@ export const loginUsuario = async (req, res) => {
 
   try {
     const usuario = await Usuario.findOne({ where: { email: email } });
+    if (!usuario) {
+      return res.json({ ok: false, msg: 'Email no encontrado' });
+    }
 
     const validPass = bcryptjs.compareSync(password, usuario.password);
-    if (!usuario || !validPass) {
+    if (!validPass) {
       return res.status(400).json({
         ok: false,
         msg: 'Email o contraseña incorrecta',
