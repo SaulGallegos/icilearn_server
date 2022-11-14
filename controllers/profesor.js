@@ -1,10 +1,18 @@
-import bcryptjs from 'bcryptjs';
+import bcryptjs from "bcryptjs";
 
-import { generarJWT } from '../helpers/generar-jwt';
-import Profesor from '../models/profesor';
+import { generarJWT } from "../helpers/generar-jwt";
+import Profesor from "../models/profesor";
 
 export const getProfesores = async (req, res) => {
   const profesores = await Profesor.findAll();
+
+  if (!profesores) {
+    return res.status(400).json({
+      status: false,
+      msg: "No hay profesores",
+      profesores,
+    });
+  }
 
   res.json(profesores);
 };
@@ -12,6 +20,12 @@ export const getProfesores = async (req, res) => {
 export const getProfesor = async (req, res) => {
   const { id } = req.params;
   const profesor = await Profesor.findByPk(id);
+  if (!profesor) {
+    return res.status(400).json({
+      status: false,
+      msg: "Profesor no encontrado",
+    });
+  }
 
   res.json(profesor);
 };
@@ -24,7 +38,7 @@ export const crearProfesor = async (req, res) => {
     where: { email: body.email },
   });
   if (emailExistente.length > 0) {
-    return res.json({ ok: false, msg: 'El email ya existe' });
+    return res.json({ ok: false, msg: "El email ya existe" });
   }
 
   // Crypt password
@@ -49,7 +63,7 @@ export const loginProfesor = async (req, res) => {
     if (!profesor || !validPass) {
       return res.status(400).json({
         ok: false,
-        msg: 'Email o contraseña incorrecta',
+        msg: "Email o contraseña incorrecta",
       });
     }
 
@@ -61,7 +75,7 @@ export const loginProfesor = async (req, res) => {
     console.log(e);
     return res.status(400).json({
       ok: false,
-      msg: 'Email o contraseña incorrecta',
+      msg: "Email o contraseña incorrecta",
     });
   }
 };

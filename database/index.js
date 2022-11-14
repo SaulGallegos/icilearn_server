@@ -1,6 +1,6 @@
 import { Sequelize } from 'sequelize';
 
-export const db = new Sequelize('icilearn', 'root', 'password', {
+export const db = new Sequelize('icilearn', 'root', '', {
   host: 'localhost',
   dialect: 'mysql',
   logging: false,
