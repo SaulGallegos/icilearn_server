@@ -7,7 +7,7 @@ export const getUsuarios = async (req, res) => {
   const usuarios = await Usuario.findAll();
 
   if (!usuarios) {
-    return res.json({
+    return res.status(404).json({
       ok: false,
       msg: 'No hay usuarios',
       usuarios: [],
@@ -19,10 +19,11 @@ export const getUsuarios = async (req, res) => {
 
 export const getUsuario = async (req, res) => {
   const { id } = req.params;
+
   const usuario = await Usuario.findByPk(id);
 
   if (!usuario) {
-    return res.json({
+    return res.status(404).json({
       ok: false,
       msg: 'Usuario no encontrado',
     });
@@ -39,7 +40,7 @@ export const crearUsuario = async (req, res) => {
     where: { email: body.email },
   });
   if (emailExistente.length > 0) {
-    return res.json({ ok: false, msg: 'El email ya existe' });
+    return res.status(400).json({ ok: false, msg: 'El email ya existe' });
   }
 
   // Crypt password
@@ -62,7 +63,7 @@ export const loginUsuario = async (req, res) => {
   try {
     const usuario = await Usuario.findOne({ where: { email: email } });
     if (!usuario) {
-      return res.json({ ok: false, msg: 'Email no encontrado' });
+      return res.status(400).json({ ok: false, msg: 'Email no encontrado' });
     }
 
     const validPass = bcryptjs.compareSync(password, usuario.password);

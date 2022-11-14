@@ -1,4 +1,8 @@
 import express from 'express';
+import { check } from 'express-validator';
+
+import { validarCampos } from '../helpers/validar-campos';
+import { validarJWT } from '../helpers/validar-jwt';
 
 import {
   getUsuarios,
@@ -11,13 +15,37 @@ import {
 
 const router = express.Router();
 
-router.get('/', getUsuarios);
+router.get('/', [validarJWT, validarCampos], getUsuarios);
 
-// TODO validar campos
-router.get('/:id', getUsuario);
+router.get('/:id', [validarJWT, validarCampos], getUsuario);
 
-router.post('/login', loginUsuario);
+router.post(
+  '/login',
+  [
+    check('email').isEmail().withMessage('El email es obligatorio'),
+    check('password')
+      .not()
+      .isEmpty()
+      .withMessage('La contraseña es obligatoria'),
 
-router.post('/', crearUsuario);
+    validarCampos,
+  ],
+  loginUsuario
+);
+
+router.post(
+  '/',
+  [
+    check('email').isEmail().withMessage('El email es obligatorio'),
+    check('password')
+      .not()
+      .isEmpty()
+      .withMessage('La contraseña es obligatoria'),
+    check('nombre', 'El nombre es obligatorio').not().isEmpty(),
+    check('apellidos', 'Los apellidos son obligatorios').not().isEmpty(),
+    validarCampos,
+  ],
+  crearUsuario
+);
 
 export default router;
