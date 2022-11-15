@@ -80,6 +80,53 @@ export const loginProfesor = async (req, res) => {
   }
 };
 
-export const editarProfesor = async (req, res) => {};
+export const editarProfesor = async (req, res) => {
+  const { id } = req.params;
+  const { body } = req;
 
-export const eliminarProfesor = async (req, res) => {};
+  const profesor = await Profesor.findByPk(id);
+  if (!profesor) {
+    return res.status(404).json({
+      ok: false,
+      msg: "Profesor no encontrado",
+    });
+  }
+
+  try {
+    profesor.set({
+      nombre: body.nombre,
+      apellidos: body.apellidos,
+      email: body.email,
+    });
+    await profesor.save();
+    return res.json({ ok: true, profesor });
+  } catch (e) {
+    console.log(e);
+    return res.status(400).json({
+      ok: false,
+      msg: "Error al editar profesor",
+    });
+  }
+};
+
+export const eliminarProfesor = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const profesor = await Profesor.findByPk(id);
+    if (!profesor) {
+      return res.status(404).json({
+        ok: false,
+        msg: "Profesor no encontrado",
+      });
+    }
+    await Profesor.destroy({ where: { id: id }, force: true });
+    return res.json({ ok: true, msg: "Profesor eliminado" });
+  } catch (e) {
+    console.log(e);
+    return res.status(400).json({
+      ok: false,
+      msg: "Error al editar Profesor",
+    });
+  }
+};
