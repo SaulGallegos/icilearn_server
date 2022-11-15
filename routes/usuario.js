@@ -48,4 +48,21 @@ router.post(
   crearUsuario
 );
 
+router.put(
+  '/:id',
+  [
+    validarJWT,
+    check('email').isEmail().withMessage('El email es obligatorio'),
+    check('nombre').not().isEmpty().withMessage('El nombre es obligatorio'),
+    check('apellidos')
+      .not()
+      .isEmpty()
+      .withMessage('Los apellidos son obligatorios'),
+    validarCampos,
+  ],
+  editarUsuario
+);
+
+router.delete('/:id', [validarJWT, validarCampos], eliminarUsuario);
+
 export default router;

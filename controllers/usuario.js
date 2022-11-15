@@ -87,6 +87,57 @@ export const loginUsuario = async (req, res) => {
   }
 };
 
-export const editarUsuario = async (req, res) => {};
+export const editarUsuario = async (req, res) => {
+  const { id } = req.params;
+  const { body } = req;
 
-export const eliminarUsuario = async (req, res) => {};
+  const usuario = await Usuario.findByPk(id);
+  if (!usuario) {
+    return res.status(404).json({
+      ok: false,
+      msg: 'Usuario no encontrado',
+    });
+  }
+
+  try {
+    usuario.set({
+      nombre: body.nombre,
+      apellidos: body.apellidos,
+      email: body.email,
+    });
+    await usuario.save();
+    return res.json({ ok: true, usuario });
+  } catch (e) {
+    console.log(e);
+    return res.status(400).json({
+      ok: false,
+      msg: 'Error al editar usuario',
+    });
+  }
+};
+
+export const eliminarUsuario = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const usuario = await Usuario.findByPk(id);
+    if (!usuario) {
+      return res.status(404).json({
+        ok: false,
+        msg: 'Usuario no encontrado',
+      });
+    }
+    await Usuario.destroy({ where: { id: id }, force: true });
+    return res.json({ ok: true, msg: 'Usuario eliminado' });
+  } catch (e) {
+    console.log(e);
+    return res.status(400).json({
+      ok: false,
+      msg: 'Hubo un error al eliminar el usuario',
+    });
+  }
+};
+
+// Actualizar nivel de usuario
+// set diagnostico true
+// update password
