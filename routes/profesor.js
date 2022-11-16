@@ -3,6 +3,7 @@ import { check } from "express-validator";
 
 import { validarCampos } from "../helpers/validar-campos";
 import { validarJWT } from "../helpers/validar-jwt";
+import { profeExists } from "../middleware/profeExists";
 
 import {
   getProfesores,
@@ -11,13 +12,14 @@ import {
   loginProfesor,
   editarProfesor,
   eliminarProfesor,
+  eliminarCuenta,
 } from "../controllers/profesor";
 
 const router = express.Router();
 
 router.get("/", [validarJWT, validarCampos], getProfesores);
 
-router.get("/:id", [validarJWT, validarCampos], getProfesor);
+router.get("/:id", [validarJWT, profeExists, validarCampos], getProfesor);
 
 router.post(
   "/login",
@@ -62,6 +64,8 @@ router.put(
   ],
   editarProfesor
 );
+
+router.delete("/eliminar-cuenta", [validarJWT, validarCampos], eliminarCuenta);
 
 router.delete("/:id", [validarJWT, validarCampos], eliminarProfesor);
 

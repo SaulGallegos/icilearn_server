@@ -20,12 +20,6 @@ export const getProfesores = async (req, res) => {
 export const getProfesor = async (req, res) => {
   const { id } = req.params;
   const profesor = await Profesor.findByPk(id);
-  if (!profesor) {
-    return res.status(400).json({
-      status: false,
-      msg: "Profesor no encontrado",
-    });
-  }
 
   res.json(profesor);
 };
@@ -127,6 +121,23 @@ export const eliminarProfesor = async (req, res) => {
     return res.status(400).json({
       ok: false,
       msg: "Error al editar Profesor",
+    });
+  }
+};
+
+export const eliminarCuenta = async (req, res) => {
+  const { id } = req;
+
+  try {
+    const profesor = await Profesor.findByPk(id);
+    console.log(profesor);
+    await Profesor.destroy({ where: { id: id }, force: true });
+    return res.json({ ok: true, msg: "Profesor eliminado" });
+  } catch (e) {
+    console.log(e);
+    return res.status(400).json({
+      ok: false,
+      msg: "Hubo un error al eliminar el Profesor",
     });
   }
 };
