@@ -22,13 +22,6 @@ export const getUsuario = async (req, res) => {
 
   const usuario = await Usuario.findByPk(id);
 
-  if (!usuario) {
-    return res.status(404).json({
-      ok: false,
-      msg: 'Usuario no encontrado',
-    });
-  }
-
   res.json(usuario);
 };
 
@@ -88,16 +81,10 @@ export const loginUsuario = async (req, res) => {
 };
 
 export const editarUsuario = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req;
   const { body } = req;
 
   const usuario = await Usuario.findByPk(id);
-  if (!usuario) {
-    return res.status(404).json({
-      ok: false,
-      msg: 'Usuario no encontrado',
-    });
-  }
 
   try {
     usuario.set({
@@ -120,13 +107,6 @@ export const eliminarUsuario = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const usuario = await Usuario.findByPk(id);
-    if (!usuario) {
-      return res.status(404).json({
-        ok: false,
-        msg: 'Usuario no encontrado',
-      });
-    }
     await Usuario.destroy({ where: { id: id }, force: true });
     return res.json({ ok: true, msg: 'Usuario eliminado' });
   } catch (e) {
@@ -138,6 +118,67 @@ export const eliminarUsuario = async (req, res) => {
   }
 };
 
-// Actualizar nivel de usuario
-// set diagnostico true
+export const levelUp = async (req, res) => {
+  const { id } = req;
+  const usuario = await Usuario.findByPk(id);
+
+  try {
+    usuario.nivel = usuario.nivel + 1;
+    await usuario.save();
+    return res.json({ ok: true, usuario });
+  } catch (e) {
+    console.log(e);
+    return res.status(400).json({
+      ok: false,
+      msg: 'Hubo un error al actualizar el nivel',
+    });
+  }
+};
+
+export const setDiagnostic = async (req, res) => {
+  const { amount } = req.body;
+  if (!amount || amount < 0 || amount > 10) {
+    return res.status(400).json({
+      ok: false,
+      msg: 'Amount no valida',
+    });
+  }
+  const usuario = await Usuario.findByPk(req.id);
+  try {
+    usuario.testCompletado = true;
+    if (amount >= 8) {
+      usuario.nivel = 3;
+    } else if (amount >= 5) {
+      usuario.nivel = 2;
+    } else {
+      usuario.nivel = 1;
+    }
+    await usuario.save();
+    return res.json({ ok: true, usuario });
+  } catch (e) {
+    console.log(e);
+    return res.status(400).json({
+      ok: false,
+      msg: 'Hubo un error al actualizar el diagnostico',
+    });
+  }
+  // set testCompletado true
+  // set nivel
+};
+
+export const eliminarCuenta = async (req, res) => {
+  const { id } = req;
+
+  try {
+    await Usuario.destroy({ where: { id: id }, force: true });
+    return res.json({ ok: true, msg: 'Usuario eliminado' });
+  } catch (e) {
+    console.log(e);
+    return res.status(400).json({
+      ok: false,
+      msg: 'Hubo un error al eliminar el usuario',
+    });
+  }
+};
+
 // update password

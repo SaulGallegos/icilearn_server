@@ -11,13 +11,17 @@ import {
   loginUsuario,
   editarUsuario,
   eliminarUsuario,
+  levelUp,
+  setDiagnostic,
+  eliminarCuenta,
 } from '../controllers/usuario';
+import { userExists } from '../middleware/userExists';
 
 const router = express.Router();
 
-router.get('/', [validarJWT, validarCampos], getUsuarios);
+router.get('/:id', [validarJWT, userExists, validarCampos], getUsuario);
 
-router.get('/:id', [validarJWT, validarCampos], getUsuario);
+router.get('/', [validarJWT, validarCampos], getUsuarios);
 
 router.post(
   '/login',
@@ -49,6 +53,14 @@ router.post(
 );
 
 router.put(
+  '/diagnostico-completado',
+  [validarJWT, validarCampos],
+  setDiagnostic
+);
+
+router.put('/levelup', [validarJWT, validarCampos], levelUp);
+
+router.put(
   '/:id',
   [
     validarJWT,
@@ -63,6 +75,8 @@ router.put(
   editarUsuario
 );
 
-router.delete('/:id', [validarJWT, validarCampos], eliminarUsuario);
+router.delete('/eliminar-cuenta', [validarJWT, validarCampos], eliminarCuenta);
+
+router.delete('/:id', [validarJWT, userExists, validarCampos], eliminarUsuario);
 
 export default router;
