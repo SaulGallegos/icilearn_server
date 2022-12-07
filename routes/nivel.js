@@ -4,9 +4,11 @@ import { check } from 'express-validator';
 import { validarCampos } from '../helpers/validar-campos';
 import { validarJWT } from '../helpers/validar-jwt';
 
-import { getLevel } from '../controllers/nivel';
+import { getLevel, getLevels } from '../controllers/nivel';
 
 const router = express.Router();
+
+router.get('/', [validarJWT, validarCampos], getLevels);
 
 router.get(
   '/:nivel',

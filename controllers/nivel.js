@@ -3,6 +3,15 @@ import Level from '../models/nivel';
 import Pregunta from '../models/pregunta';
 import Recurso from '../models/recursos';
 
+export const getLevels = async (req, res) => {
+  const levels = await Level.findAll();
+
+  res.json({
+    ok: true,
+    niveles: levels,
+  });
+};
+
 export const getLevel = async (req, res) => {
   const { nivel } = req.params;
 
