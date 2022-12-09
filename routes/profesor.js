@@ -13,11 +13,14 @@ import {
   editarProfesor,
   eliminarProfesor,
   eliminarCuenta,
+  dashboard,
 } from "../controllers/profesor";
 
 const router = express.Router();
 
 router.get("/", [validarJWT, validarCampos], getProfesores);
+
+router.get("/dashboard", [validarJWT, validarCampos], dashboard);
 
 router.get("/:id", [validarJWT, profeExists, validarCampos], getProfesor);
 

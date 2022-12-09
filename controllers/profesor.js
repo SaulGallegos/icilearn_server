@@ -2,6 +2,7 @@ import bcryptjs from "bcryptjs";
 
 import { generarJWT } from "../helpers/generar-jwt";
 import Profesor from "../models/profesor";
+import Usuario from "../models/usuario";
 
 export const getProfesores = async (req, res) => {
   const profesores = await Profesor.findAll();
@@ -141,3 +142,31 @@ export const eliminarCuenta = async (req, res) => {
     });
   }
 };
+
+export const dashboard = async (req, res) => {
+  const usuarios = await Usuario.findAll({
+    attributes: ["nombre", "apellidos", "testCompletado", "nivel", "email"],
+  });
+
+  if (usuarios.length < 1) {
+    return res.status(400).json({
+      status: false,
+      msg: "No hay alumnos",
+      usuarios: [],
+    });
+  }
+  res.json({ status: true, usuarios, total_alumnos: usuarios.length });
+};
+
+/*export const dashboard = async (req, res) => {
+  const usuarios = await Usuario.findAll();
+
+  if (usuarios.length < 1) {
+    return res.status(400).json({
+      status: false,
+      msg: "No hay alumnos",
+      usuarios: [],
+    });
+  }
+  res.json({ status: true, usuarios });
+};*/
